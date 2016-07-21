@@ -141,7 +141,7 @@ $ lein ring server
 
 Запускаем и в консоли можно увидеть, как логируется каждый запрос:
 
-[!screen](https://yadi.sk/i/rYQVP7RvrtJC3)
+[!screen](http://imgur.com/a/tjC3b)
 
 ## Отдаем статические файлы: css,js и т.п.
 

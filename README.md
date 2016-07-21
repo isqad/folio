@@ -180,3 +180,23 @@ $ lein ring server
 ```	  
 
 Сейчас можно запустить сервер и открыть в браузере ```localhost:3000/css/normalize.css```. Вы увидете исходный текст css стилей.
+
+## Hiccup: добавляем шаблонизатор
+
+Для отображения веб-странички с динамическим контентом необходима функция, которая распарсит html-шаблон с некоторыми метками и заменит метки на нужный нам текст. В clojure наибольшей популярностью славится шаблонизатор [hiccup](https://github.com/weavejester/hiccup). Данная библиотека служит для конвертации clojure-объектов в html-представление. Простейшим примером шаблона может служить следующий вектор:
+
+```clojure
+
+(defn index-page
+  []
+  [:div {:class "container} "Hello world!"])
+```
+
+Что можно переконвертировать в html  с помощью hiccup:
+
+```clojure
+user=> (use 'hiccup.core)
+nil
+user=> (html (index-page))
+"<div class=\"container\">Hello world!</div>"
+```

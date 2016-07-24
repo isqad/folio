@@ -200,3 +200,66 @@ nil
 user=> (html (index-page))
 "<div class=\"container\">Hello world!</div>"
 ```
+
+Comming soon...
+
+## Compojure: маршрутиризация
+
+Одностраничными сайтами бывают обычно сайты-визитки, рекламные и т.п. простые решения. Более сложные информационные ресурсы состоят из нескольких 
+страниц. Задачу определения маршрутиризации uri-путей в clojure поможет маленькая библиотека [compojure](https://github.com/weavejester/compojure), 
+которую почему-то зовут фреймворком. 
+Далее я расскажу принцип ее работы, и как происходит парсинг путей. Сейчас чтобы не скучать, приведу сразу пример использования compojure в нашем Hello world 
+проекте:
+
+```clojure
+; project.clj
+
+(defproject hello-world "0.1.0-SNAPSHOT"
+  :description "FIXME: write description"
+  :url "http://example.com/FIXME"
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [ring/ring-core "1.4.0"]
+                 [ring/ring-jetty-adapter "1.4.0"]
+                 [ring-logger-timbre "0.7.5"]
+				 ; подключаем compojure
+				 [compojure "1.5.1"]]
+  :plugins [[lein-ring "0.9.7"]]
+  :ring {:handler hello-world.handler/app})
+
+```  
+
+Теперь необходимо перевести наш `handler` на работу с compojure. Для этого мы должны предоставить "карту маршрутов" на макросах из библиотеки compojure:
+
+```clojure
+; src/hello-world/handler.clj
+
+(ns hello-world.handler
+  (:require [ring.logger.timbre :as logger.timbre]
+            [compojure.core :refer :all]
+			[compojure.route :as route]))
+
+; старый handler запросов 
+; (defn handler
+;   [request]
+;   {:status 200
+;    :headers {"Content-Type" "text/html"}
+;    :body "<h1>Hello World!</h1>"})
+
+; новый handler сформируется из карты маршрутов. 
+; Еще раз напомню, что ring мы должны передать функцию-обработчик, 
+; которая при выполнении в контексте запроса сформирует ответ. 
+; Макросы GET, POST и т.п. можно представить как функции-прослойки, 
+; которые выполнят свой последний аргумент только в том случае, если uri совпадет с заданным.
+(def application-routes
+  (routes
+    (GET "/" [] (str "<h1>Hello World!</h1>"))
+	; в случае если пользователь перейдет по урлу не совпадающему ни с одним указанным маршрутом, ему вернется ответ 404
+	(route/not-found (str "<h1>Page not found</h1>"))))
+	
+(def app
+  (logger.timbre/wrap-with-logger application-routes))
+```
+
+Comming soon...
